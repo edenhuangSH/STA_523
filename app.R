@@ -1,10 +1,6 @@
 source("functions_def.R")
 source("preprocessing.R")
 
-job_category = setNames(seq(1,3), c('Cluster 1', 'Cluster 2', 'Cluster 3'))
-states = read.csv("states.csv")
-# load(file.path('data', 'lda_model.RData'))
-
 # ui.R
 shinyApp(
   ui = fluidPage(

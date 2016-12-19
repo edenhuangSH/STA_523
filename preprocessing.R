@@ -1,4 +1,5 @@
 source("functions_def.R")
+states = read.csv("states.csv")
 
 # I. fitting LDA model:
 
@@ -8,11 +9,19 @@ files = dir('data')
 if (!('lda_model.RData' %in% files)) {
   # Download the data and description for "Data Analyst"
   dir.create('data', showWarnings = FALSE)
-  job_train_lda = JobDescript("data", 1000)
-  save(job_train_lda, file = file.path('data','job_train_lda.RData'))
+
+  job_train = data.frame()
+  for (i in seq_along(states$State)) {
+    location = as.character(states$State[i])
+    new_jobs = JobDescript("data", 20, location)
+    new_jobs$location = as.character(new_jobs$location)
+    job_train = bind_rows(job_train, new_jobs)
+  }
+
+  save(job_train, file = file.path('data','job_train.RData'))
 
   # Clean the descriptions
-  job_corpus = data2corpus(job_train_lda)
+  job_corpus = data2corpus(job_train)
   clean_job_corpus = clean_corpus(job_corpus)
   stem_job_corpus = clean_job_corpus %>% tm_map(stemDocument)
 
@@ -50,3 +59,10 @@ if (!(dir.exists('cities'))) {
 
 }
 
+# --------------------------------------------------------------------------
+# load data for shiny
+
+job_category = setNames(seq(1,3), c('Cluster 1', 'Cluster 2', 'Cluster 3'))
+states = c(' ', states)
+load(file.path('data', 'lda_model.RData'))
+load(file.path('data', 'job_train.RData'))

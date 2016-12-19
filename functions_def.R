@@ -122,7 +122,7 @@ WordCloud = function(corpus) {
   corpus = corpus %>% tm_map(removeWords, removed_dictionary)
 
   wordcloud(corpus,
-            scale=c(5,0.25),
+            scale=c(3,0.25),
             max.words=70,
             random.order=FALSE,
             rot.per=0.35,
@@ -184,7 +184,7 @@ map_jobs = function(locations){
                                  enableScrollWheel=TRUE,
                                  mapType='normal',
                                  useMapTypeControl=TRUE,
-                                 width="100%", height="75vh", margin= "0",border="none" ))
+                                 width="100%", height="75vh", margin= "0",border="none", zoomLevel = 7))
   ds_map
 }
 

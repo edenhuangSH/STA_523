@@ -11,6 +11,7 @@ library(googleVis)      # for gvisMap()
 library(ggmap)          # for geocode()
 library(wordcloud)      # for word cloud function
 library(RColorBrewer)   # Color Brewer palletes
+library(shinythemes)
 
 # some necessary usual libraries:
 library(dplyr)

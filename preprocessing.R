@@ -8,7 +8,7 @@ files = dir('data')
 if (!('lda_model.RData' %in% files)) {
   # Download the data and description for "Data Analyst"
   dir.create('data', showWarnings = FALSE)
-  job_train_lda = JobDescript("data", 10)
+  job_train_lda = JobDescript("data", 1000)
   save(job_train_lda, file = file.path('data','job_train_lda.RData'))
 
   # Clean the descriptions
@@ -31,7 +31,9 @@ if (!('lda_model.RData' %in% files)) {
   save(lda_model, file = file.path('data','lda_model.RData'))
 }
 
-# Webscraping for mapping --------------------------------------------------
+
+
+# II. Webscraping for mapping --------------------------------------------------
 
 if (!(dir.exists('cities'))) {
   GET("http://www.mapcruzin.com/fcc-wireless-shapefiles/cities-towns.zip",
@@ -47,6 +49,35 @@ if (!(dir.exists('cities'))) {
     data.frame() %>%
     select(lon = x, lat = y) %>%
     mutate(city=shp@data$NAME, state=shp@data$STATE)
-
 }
+
+
+
+# III. Obtain relative job title of each category --------------------------------------------------
+cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
+             topics(lda_model) %>%
+               matrix(ncol = 1)) %>% 
+  data.frame(stringsAsFactors = FALSE) %>% 
+  setNames(c("JobTitle", "Company", "Cluster"))
+
+category <- data.frame()
+for (i in 1:3) {
+  category <- rbind(category,
+                    cbind(
+                      cat[which(cat$Cluster == i), 1] %>%
+                        table() %>%
+                        sort(decreasing = TRUE) %>%
+                        head(n = 3L) %>%
+                        as.data.frame() %>%
+                        setNames(c("JobTitle", "JobFrequents")),
+                      cat[which(cat$Cluster == i), 2] %>%
+                        table() %>%
+                        sort(decreasing = TRUE) %>%
+                        head(n = 3L) %>%
+                        as.data.frame() %>%
+                        setNames(c("Company", "ComFrequents")),
+                      cat = i))
+}                   
+
+
 

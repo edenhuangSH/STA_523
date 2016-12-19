@@ -8,7 +8,7 @@ files = dir('data')
 if (!('lda_model.RData' %in% files)) {
   # Download the data and description for "Data Analyst"
   dir.create('data', showWarnings = FALSE)
-  job_train_lda = JobDescript("data", 10)
+  job_train_lda = JobDescript("data", 1000)
   save(job_train_lda, file = file.path('data','job_train_lda.RData'))
 
   # Clean the descriptions

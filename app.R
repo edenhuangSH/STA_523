@@ -1,7 +1,7 @@
 source("functions_def.R")
 source("preprocessing.R")
 
-job_category = seq(1,5)
+job_category = setNames(seq(1,3), c('Cluster 1', 'Cluster 2', 'Cluster 3'))
 states = read.csv("states.csv")
 # load(file.path('data', 'lda_model.RData'))
 
@@ -14,17 +14,19 @@ shinyApp(
     # Sidebar with a slider input for sock parameters
     sidebarPanel(
         #Input the job category to search
-        selectInput("category", "Select a Job Category:", choices = job_category, selected = FALSE),
+        selectInput("category", "Select a Job Cluster:", choices = job_category, selected = FALSE),
         hr(),
         #Input the location to search
         selectInput("state", "Select a State:", choices = states$State, selected = FALSE),
         hr(),
+        hr(),
         p('Shiny App made by Team Standard Deviants in R, using the jobbR, wordcloud, googleVis and other packages.'),
         p('Special thanks to Prof. Colin Rundel and the amazing course STA 523 at Duke University:'),
+        hr(),
         HTML('<a href="http://www2.stat.duke.edu/~cr173/Sta523_Fa16">
              <img src="http://chem.duke.edu/sites/chem.duke.edu/themes/dukechem/images/duke-footer-logo.png" width="150" height="60" border="0" alt="View the STA 523 Course Website"> </a>'),
         tags$div(
-          HTML('<span id=indeed_at><a href="http://www.indeed.com/">jobs</a> powered by <a
+          HTML('<br><br><span id=indeed_at><a href="http://www.indeed.com/">jobs</a> powered by <a
                href="http://www.indeed.com/" title="Job Search"><img
                src="http://www.indeed.com/p/jobsearch.gif" style="border: 0;
                vertical-align: middle;" width="80" height="25" alt="Indeed job search"></a></span>'

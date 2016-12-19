@@ -1,10 +1,6 @@
 source("functions_def.R")
-states = read.csv("states.csv", stringsAsFactors = F)
 
-# I. fitting LDA model:
-
-# check if lda_model exists and makes model if not
-dir.create('data', showWarnings = FALSE)
+states = read.csv(file.path('data', "states.csv"), stringsAsFactors = F)
 files = dir('data')
 
 if (!('lda_model.RData' %in% files)) {
@@ -62,7 +58,8 @@ if (!('geo.RData' %in% files)) {
     mutate(city=shp@data$NAME, state=shp@data$STATE)
 
   save(geo, file = file.path('data','geo.RData'))
-
+  file.remove("cities.zip")
+  unlink("cities", recursive=TRUE)
 }
 
 load(file.path('data','geo.RData'))

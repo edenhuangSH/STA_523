@@ -66,8 +66,23 @@ shinyApp(
   server = function(input, output) {
     # the outputs for table:
     output$category = renderTable({
-      data.frame(category$JobTitle[which(category$cat == input$category)],
-                 category$Company[which(category$cat == input$category)]) %>%
+      job.title = category %>%
+        select(JobTitle, Cluster) %>%
+        filter(Cluster == input$category) %>%
+        group_by(JobTitle) %>%
+        count() %>%
+        arrange(desc(n)) %>%
+        select(JobTitle) %>%
+        slice(1:3)
+      company = category %>%
+        select(Company, Cluster) %>%
+        filter(Cluster == input$category) %>%
+        group_by(Company) %>%
+        count() %>%
+        arrange(desc(n)) %>%
+        select(Company) %>%
+        slice(1:3)
+      data.frame(job.title,company) %>%
         setNames(c("Job Title", "Company"))
     })
     

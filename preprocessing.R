@@ -1,5 +1,5 @@
 source("functions_def.R")
-states = read.csv("states.csv")
+states = read.csv("states.csv", stringsAsFactors = F)
 
 # I. fitting LDA model:
 
@@ -72,23 +72,23 @@ load(file.path('data', 'job_train.RData'))
 # --------------------------------------------------------------------------
 # Obtain relative job title of each category
 
-cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
+category <- cbind(job_train$results.jobtitle, job_train$results.company, job_train$results.state,
              topics(lda_model) %>%
-               matrix(ncol = 1)) %>% 
-  data.frame(stringsAsFactors = FALSE) %>% 
-  setNames(c("JobTitle", "Company", "Cluster"))
+               matrix(ncol = 1)) %>%
+  data.frame(stringsAsFactors = FALSE) %>%
+  setNames(c("JobTitle", "Company", "Abbreviation", "Cluster"))
 
-for (i in 1:3) {
-  assign(paste0("title", i), cate[which(cat$Cluster == i), 1] %>%
-           table() %>%
-           sort(decreasing = TRUE) %>%
-           head(n = 3L) %>%
-           as.data.frame() %>%
-           setNames(c("JobTitle", "Frequents")))
-  assign(paste0("company", i), cate[which(cat$Cluster == i), 2] %>%
-           table() %>%
-           sort(decreasing = TRUE) %>%
-           head(n = 3L) %>%
-           as.data.frame() %>%
-           setNames(c("Company", "Frequents")))
-}
+# for (i in 1:3) {
+#   assign(paste0("title", i), category[which(category$Cluster == i), 1] %>%
+#            table() %>%
+#            sort(decreasing = TRUE) %>%
+#            head(n = 3L) %>%
+#            as.data.frame() %>%
+#            setNames(c("JobTitle", "Frequents")))
+#   assign(paste0("company", i), category[which(category$Cluster == i), 2] %>%
+#            table() %>%
+#            sort(decreasing = TRUE) %>%
+#            head(n = 3L) %>%
+#            as.data.frame() %>%
+#            setNames(c("Company", "Frequents")))
+# }

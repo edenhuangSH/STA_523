@@ -77,18 +77,3 @@ category <- cbind(job_train$results.jobtitle, job_train$results.company, job_tra
                matrix(ncol = 1)) %>%
   data.frame(stringsAsFactors = FALSE) %>%
   setNames(c("JobTitle", "Company", "Abbreviation", "Cluster"))
-
-# for (i in 1:3) {
-#   assign(paste0("title", i), category[which(category$Cluster == i), 1] %>%
-#            table() %>%
-#            sort(decreasing = TRUE) %>%
-#            head(n = 3L) %>%
-#            as.data.frame() %>%
-#            setNames(c("JobTitle", "Frequents")))
-#   assign(paste0("company", i), category[which(category$Cluster == i), 2] %>%
-#            table() %>%
-#            sort(decreasing = TRUE) %>%
-#            head(n = 3L) %>%
-#            as.data.frame() %>%
-#            setNames(c("Company", "Frequents")))
-# }

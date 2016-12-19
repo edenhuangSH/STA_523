@@ -92,4 +92,3 @@ for (i in 1:3) {
            as.data.frame() %>%
            setNames(c("Company", "Frequents")))
 }
-

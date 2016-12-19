@@ -64,61 +64,31 @@ if (!('lda_model.RData' %in% files)) {
   save(lda_model, file = file.path('data','lda_model.RData'))
 }
 
-# obtain relative job title of each category:
-cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
-             topics(lda_model) %>%
-               matrix(ncol = 1)) %>% 
-  data.frame(stringsAsFactors = FALSE) %>% 
-  setNames(c("JobTitle", "Company", "Cluster"))
-
-category <- data.frame()
-for (i in 1:3) {
-  category <- rbind(category,
-                    cbind(
-                      cate[which(cat$Cluster == i), 1] %>%
-                        table() %>%
-                        sort(decreasing = TRUE) %>%
-                        head(n = 3L) %>%
-                        as.data.frame() %>%
-                        setNames(c("JobTitle", "JobFrequents")),
-                      cate[which(cat$Cluster == i), 2] %>%
-                        table() %>%
-                        sort(decreasing = TRUE) %>%
-                        head(n = 3L) %>%
-                        as.data.frame() %>%
-                        setNames(c("Company", "ComFrequents")),
-                      cat = i))
-}                   
-
-
-# II. Obtain relative job title of each category:
-cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
-             topics(lda_model) %>%
-               matrix(ncol = 1)) %>%
-  data.frame(stringsAsFactors = FALSE) %>%
-  setNames(c("JobTitle", "Company", "Cluster"))
-
-category <- data.frame()
-for (i in 1:3) {
-  category <- rbind(category,
-                    cbind(
-                      cat[which(cat$Cluster == i), 1] %>%
-                        table() %>%
-                        sort(decreasing = TRUE) %>%
-                        head(n = 3L) %>%
-                        as.data.frame() %>%
-                        setNames(c("JobTitle", "JobFrequents")),
-                      cat[which(cat$Cluster == i), 2] %>%
-                        table() %>%
-                        sort(decreasing = TRUE) %>%
-                        head(n = 3L) %>%
-                        as.data.frame() %>%
-                        setNames(c("Company", "ComFrequents")),
-                      cat = i))
-}
-
-
-
+# # II. Obtain relative job title of each category:
+# cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
+#              topics(lda_model) %>%
+#                matrix(ncol = 1)) %>%
+#   data.frame(stringsAsFactors = FALSE) %>%
+#   setNames(c("JobTitle", "Company", "Cluster"))
+# 
+# category <- data.frame()
+# for (i in 1:3) {
+#   category <- rbind(category,
+#                     cbind(
+#                       cat[which(cat$Cluster == i), 1] %>%
+#                         table() %>%
+#                         sort(decreasing = TRUE) %>%
+#                         head(n = 3L) %>%
+#                         as.data.frame() %>%
+#                         setNames(c("JobTitle", "JobFrequents")),
+#                       cat[which(cat$Cluster == i), 2] %>%
+#                         table() %>%
+#                         sort(decreasing = TRUE) %>%
+#                         head(n = 3L) %>%
+#                         as.data.frame() %>%
+#                         setNames(c("Company", "ComFrequents")),
+#                       cat = i))
+# }
 
 
 
@@ -127,8 +97,8 @@ for (i in 1:3) {
 #   query - a string with the job title or keyword
 #   number - an integer, the number of job results returned
 #   location - restricting results to a city or state, default is US
-
 JobDescript = function(query, number, location = "") {
+  
   id = '1267002585503060'
   result  = data.frame()
   query_limits = c(rep(25, floor(number / 25)), if(number %% 25 > 0){number %% 25})
@@ -143,7 +113,6 @@ JobDescript = function(query, number, location = "") {
                     limit = query_limits[i])
     result = rbind(result, tmp)
   }
-  
   result$job.descript = lapply(result$results.url, function(x) {
     read_html(x) %>%
       html_nodes("#job_summary") %>%
@@ -199,7 +168,6 @@ clean_corpus = function(corpus) {
 # ----------------------------------------------------------------------
 # LDA predict - takes a document term matrix and lda_model and outputs
 #               which cluster a document belongs in
-
 LDA_predict = function(lda_model, dtm) {
   test_probs = posterior(lda_model, dtm)
   test_topics = apply(test_probs$topics, 1, which.max)
@@ -259,6 +227,7 @@ geo <-
 
 # Now the map_job() function: 
 map_jobs <- function(locations){
+  
   if(is.null(locations)){
     return(gvisMap(	data.frame(locationvar = 'Durham', tipvar= ''), locationvar = "locationvar" , tipvar ='tipvar',
                     options=list(showTip=TRUE, 

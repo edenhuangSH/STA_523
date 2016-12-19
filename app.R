@@ -94,10 +94,6 @@ shinyApp(
     output$view = renderGvis({
       map_jobs(data())
     })
-    
-    output$text = renderPrint({
-      input$state
-    })
   }
 )
 

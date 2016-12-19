@@ -10,6 +10,12 @@ output: html_document
 
 ## Webscraping Indeed
 
+We utilized the `jobSearch` function in the `jobR` package to scrap information from "indeed.com". The function took several arguments: publisher, query, country, start, location, and limit and generated a data frame that contains information about jobs such as job title, location, description and job links etc. 
+
+One shorage of this function was that we could not specify the number of entries to be generated unless the number is less than 25. Our solution was to scrap multiple times and concatenate the dataframes. For example, if we were to generate 120 jobs, we scrapped 5 times with the first four times generating 25 entries each and the last time generating 20 entries. Then we concatenate the 5 dataframes into a big data frame of 120 rows.
+
+We also add a column "job.descript", which contains the full job descriptions for the jobs. To do this, we read the html links in dataframe created previously and grab the job descriptions under the "#job_summary" node.
+
 ## Clustering Jobs with LDA
 
 ## Shiny App
@@ -25,7 +31,7 @@ output: html_document
 
 The function of job map is to visualize geographically the jobs of each cluster for all states. Users may click the jobs and enter the Indeed.com websites through the urls. Also, the job map researves the google map feature such as zoom in/out, street view and satelite view.
 
-To achieve this, we created a `map_jobs` function, which took a data frame. In our project, this function takes the data frame containing information about the jobs in the *category* and *state* we select in the sidebar. After taking in the job data frame, the `map_jobs` function first generates lattitudes and longitudes for the job location. To do this, we created a data frame called `geo` that contains lattitudes and longitudes for over 25,000 cities in U.S and join the job data frame with it according to the city name. The code that generates the data frame can be found in the "Webscraping for mapping" section in "preprocessing.R".
+To achieve this, we created a `map_jobs` function, which took a data frame. In our project, this function takes the data frame containing information about the jobs in the *category* and *state* users select in the sidebar. After taking in the job data frame, the `map_jobs` function first generates lattitudes and longitudes for the job location. To do this, we created a data frame called `geo` that contains lattitudes and longitudes for over 25,000 cities in U.S and join the job data frame with it according to the city name. The code that generates the data frame can be found in the "Webscraping for mapping" section in "preprocessing.R".
 
 After that, we started plotting the jobs on our gvisMap. We first filtered out jobs such that the locations could not be matched by the `geo` dataframe. Then it created another column called "tip" to store the urls for the jobs whose locations are available. After that, we plotted the jobs on the `gvisMap` by using the `gvisMap` function in the `ggmap` package.
 

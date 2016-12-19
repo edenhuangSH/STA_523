@@ -79,13 +79,13 @@ cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
   setNames(c("JobTitle", "Company", "Cluster"))
 
 for (i in 1:3) {
-  assign(paste0("title", i), cate[which(cat$Cluster == i), 1] %>%
+  assign(paste0("title", i), cat[which(cat$Cluster == i), 1] %>%
            table() %>%
            sort(decreasing = TRUE) %>%
            head(n = 3L) %>%
            as.data.frame() %>%
            setNames(c("JobTitle", "Frequents")))
-  assign(paste0("company", i), cate[which(cat$Cluster == i), 2] %>%
+  assign(paste0("company", i), cat[which(cat$Cluster == i), 2] %>%
            table() %>%
            sort(decreasing = TRUE) %>%
            head(n = 3L) %>%

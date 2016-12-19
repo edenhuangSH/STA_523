@@ -40,7 +40,8 @@ if (!('lda_model.RData' %in% files)) {
   save(lda_model, file = file.path('data','lda_model.RData'))
 }
 
-# Webscraping for mapping --------------------------------------------------
+# --------------------------------------------------------------------------
+# Webscraping for mapping 
 
 if (!(dir.exists('cities'))) {
   GET("http://www.mapcruzin.com/fcc-wireless-shapefiles/cities-towns.zip",
@@ -66,3 +67,29 @@ job_category = setNames(seq(1,3), c('Cluster 1', 'Cluster 2', 'Cluster 3'))
 states = c(' ', states)
 load(file.path('data', 'lda_model.RData'))
 load(file.path('data', 'job_train.RData'))
+
+
+# --------------------------------------------------------------------------
+# Obtain relative job title of each category
+
+cat <- cbind(job_train_lda$results.jobtitle, job_train_lda$results.company,
+             topics(lda_model) %>%
+               matrix(ncol = 1)) %>% 
+  data.frame(stringsAsFactors = FALSE) %>% 
+  setNames(c("JobTitle", "Company", "Cluster"))
+
+for (i in 1:3) {
+  assign(paste0("title", i), cate[which(cat$Cluster == i), 1] %>%
+           table() %>%
+           sort(decreasing = TRUE) %>%
+           head(n = 3L) %>%
+           as.data.frame() %>%
+           setNames(c("JobTitle", "Frequents")))
+  assign(paste0("company", i), cate[which(cat$Cluster == i), 2] %>%
+           table() %>%
+           sort(decreasing = TRUE) %>%
+           head(n = 3L) %>%
+           as.data.frame() %>%
+           setNames(c("Company", "Frequents")))
+}
+

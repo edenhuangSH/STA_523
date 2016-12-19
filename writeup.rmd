@@ -1,0 +1,23 @@
+---
+title: "523 Final Project - Indeed Job Search"
+author: "Yumemechi Fujita, Yen Hua Cheng, Eden Huang, Faustine Li, Shoaji Li"
+output: html_document
+---
+
+<br><br>
+
+## Introduction
+
+## Webscraping Indeed
+
+## Clustering Jobs with LDA
+
+## Shiny App
+
+### Word Cloud
+
+### Job Map
+
+### Category Description
+
+## Conclusion

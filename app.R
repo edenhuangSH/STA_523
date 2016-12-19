@@ -10,7 +10,7 @@ shinyApp(
   ui = fluidPage(
     # Application title
     titlePanel("Job Search with Indeed"),
-    
+
     # Sidebar with a slider input for sock parameters
     sidebarPanel(
         #Input the job category to search
@@ -31,7 +31,7 @@ shinyApp(
           )
         )
     ),
-    
+
     # main panel with tabbed interface
     mainPanel(
       # # output a table to explain the meaning of category:
@@ -53,44 +53,42 @@ shinyApp(
     #              category$Company[which(category$cat == input$category)]) %>%
     #     setNames(c("Job Title", "Company"))
     # })
-    
+
     # render plots for word cloud:
-    output$plot = renderPlot(
-      {
+    output$plot = renderPlot({
         df = data()
-        corpus = clean_corpus(data2corpus(df))     
-        
-        if(is.null(dat$cluster)==TRUE) {
+        corpus = clean_corpus(data2corpus(df))
+
+        if(is.null(df$cluster)==TRUE) {
           print('<h1>No jobs in this category found in the state</h1>')
         }
         else{
           WordCloud(corpus)
         }
-      }
-    )
-    
+      })
+
     # update the scraping process each time when a different state is seleceted:
-    locations = reactive({
+    jobs = reactive({
       JobDescript(query = "data", number = 50, input$state)
     })
-    
+
     # transform the dataframe to document term matrix and do some cleaning:
     data = reactive({
-      dat = locations()
-      
+      dat = jobs()
+
       # clean the dataframe:
       job_dat = data2corpus(dat)
       clean_dat = clean_corpus(job_dat)
       stem_clean_dat = clean_dat %>% tm_map(stemDocument)
       dtm = DocumentTermMatrix(stem_clean_dat) # transform into document term matrix
-      
+
       # remove terms that are in greater than 80% of documents
       dtm_reduced = removeCommonTerms(dtm, 0.8)
       dtm_dense = removeSparseTerms(dtm_reduced, 0.9)
       dat$cluster = LDA_predict(lda_model, dtm_dense)
       dat = dat %>% filter(cluster==input$category)
     })
-    
+
     # plot the locations on Google Map:
     output$view = renderGvis({
       map_jobs(data())

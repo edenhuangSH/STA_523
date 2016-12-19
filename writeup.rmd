@@ -25,7 +25,7 @@ We also add a column "job.descript", which contains the full job descriptions fo
 
 ### Word Cloud
 
-
+In the word cloud function, we defined some common words that are not related to job skills (ex. one, job, new, will, work etc.) as removed_dictionary. Then, we used `tm_map`, `removeWords` function to remove those unrelated words. After this, we used `wordcloud()` to plot a word cloud. The words were plotted in decreasing frequency in the word cloud. 
 
 ### Job Map
 

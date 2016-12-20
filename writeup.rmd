@@ -56,4 +56,8 @@ After that, we started plotting the jobs on our gvisMap. We first filtered out j
 ## Conclusion
 
 
+## References
 
+https://www.cs.princeton.edu/~blei/papers/BleiNgJordan2003.pdf
+
+https://cran.r-project.org/web/packages/topicmodels/vignettes/topicmodels.pdf

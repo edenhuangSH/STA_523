@@ -18,6 +18,24 @@ We also add a column "job.descript", which contains the full job descriptions fo
 
 ## Clustering Jobs with LDA
 
+After we obtained the job decriptions, we were interested in how jobs are related to one another. Because the types of job are not know apriori, clustering jobs is considered a *unsupervised learning* problem. While there are many clustering algorithms that could have been suitable, we chose Latent Dirchlet Allocation because of its previous use in topic modeling. 
+
+LDA is a genertive model. The model assumes that for each document in a corpus, $d_n$.
+
+1. $\theta \sim Dir(\alpha)$
+
+2. For each word in $d_n$:
+  
+    a. Sample a topic, $z_i \sim Multinomial(\theta)$
+  
+    b. Sample a word, $w_n \sim p(words|z_i, \beta)$
+
+In other words, the LDA model assumes that a document is a collection of words coming from a mixture of topics. The variables $\alpha$ and $\beta$ are prior parameters for the model. The topic variable is not directly observed, therefore acts as a *latent* variable. 
+
+To assign a document a mixture of topics, we need to know the probability that the words in that document were generated using the model, $p(d_n |\alpha, \beta)$. We can find this value using Baye's Rule, but in general this posterior density is difficult to calculate. However there are many techniques such as Gibbs sampling to estimate the posterior. The final outcome is that each document is a assigned a mixture of topics, 30% from topic 1, 40% from topic 2, and so forth. Although topic assignment is probabalistic, to visualize similar jobs we grouped jobs based on the topic with the highest contribution. 
+
+The R package `topicmodels` implements latent dirchlet allocation. The input to `LDA` is a number of clusters and a document term matrix. The default method for training the model is variational E-M, a technique for posterior inference. The output is a trained model, where each document is has cluster assignments. Training on the roughly 1000 documents we scraped from Indeed took 1-2 minutes.  
+
 ## Shiny App
 
 

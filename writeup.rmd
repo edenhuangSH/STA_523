@@ -8,6 +8,14 @@ output: html_document
 
 ## Introduction
 
+Our project explores data-related jobs on Indeed using `R`. A large part of our project is clustering jobs by their job descriptions. We obtained job descriptions from Indeed using webscrapping. To visualize our results we created a Shiny app.
+
+This image is an outline of our process:
+
+![](flow.png)
+
+<br>
+
 ## Webscraping Indeed
 
 We utilized the `jobSearch` function in the `jobR` package to scrap information from "indeed.com". The function took several arguments: publisher, query, country, start, location, and limit and generated a data frame that contains information about jobs such as job title, location, description and job links etc. 
@@ -15,6 +23,8 @@ We utilized the `jobSearch` function in the `jobR` package to scrap information 
 One shorage of this function was that we could not specify the number of entries to be generated unless the number is less than 25. Our solution was to scrap multiple times and concatenate the dataframes. For example, if we were to generate 120 jobs, we scrapped 5 times with the first four times generating 25 entries each and the last time generating 20 entries. Then we concatenate the 5 dataframes into a big data frame of 120 rows.
 
 We also add a column "job.descript", which contains the full job descriptions for the jobs. To do this, we read the html links in dataframe created previously and grab the job descriptions under the "#job_summary" node.
+
+<br>
 
 ## Text cleaning
 
@@ -48,9 +58,6 @@ The R package `topicmodels` implements latent dirchlet allocation. The input to 
 
 ## Shiny App
 
-
-
-
 ### Word Cloud
 
 In the word cloud function, we defined some common words that are not related to job skills (ex. one, job, new, will, work etc.) as removed_dictionary. Then, we used `tm_map`, `removeWords` function to remove those unrelated words. After this, we used `wordcloud()` to plot a word cloud. The words were plotted in decreasing frequency in the word cloud. 
@@ -63,14 +70,22 @@ To achieve this, we created a `map_jobs` function, which took a data frame. In o
 
 After that, we started plotting the jobs on our gvisMap. We first filtered out jobs such that the locations could not be matched by the `geo` dataframe. Then it created another column called "tip" to store the urls for the jobs whose locations are available. After that, we plotted the jobs on the `gvisMap` by using the `gvisMap` function in the `ggmap` package.
 
+### Cluster Table 
+
+We wanted to show common job descriptions and companies for each cluster in a table. This provides a better explantion of which jobs are associated with each cluster. We used data from our training set to create this table. 
+
 <br>
 
 ## Conclusion
+
+We created a Shiny app that explores clusters of jobs using data from Indeed. We webscraped the data, cleaned and transformed the data and displayed the cluster information with a word cloud and map of jobs. 
 
 
 ## References
 
 https://en.wikipedia.org/wiki/Document-term_matrix
+
+http://onepager.togaware.com/TextMiningO.pdf
 
 https://www.cs.princeton.edu/~blei/papers/BleiNgJordan2003.pdf
 

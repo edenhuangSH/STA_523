@@ -1,33 +1,29 @@
 source("functions_def.R")
 source("preprocessing.R")
 
-job_category = seq(1,3)
-states = read.csv("states.csv")
-# load(file.path('data', 'lda_model.RData'))
-
 # ui.R
 shinyApp(
   ui = fluidPage(
     # Change the theme of shiny app
-    theme = shinythemes::shinytheme("united"),  
-    
+    theme = shinythemes::shinytheme("united"),
+
     # Change the style of the title of the app
     tags$head(
       tags$style(HTML("@import url('//fonts.googleapis.com/css?family=Lobster|Cabin:400,700');"))
     ),
-    
+
     headerPanel(
-      h1("Data-related Job Search with Indeed", 
+      h1("Data-related Job Search with Indeed",
          style = "font-family: 'Lobster', cursive;
-         font-weight: 1000; line-height: 2.1; 
+         font-weight: 1000; line-height: 2.1;
          color: #4d3a7d;")),
-    
+
     # Sidebar with a slider input for sock parameters
     sidebarPanel(
-      # insert a job seaerch related image for decoration: 
+      # insert a job seaerch related image for decoration:
       HTML('<img src="http://stat.duke.edu/sites/stat.duke.edu/files/documents/dukestatsci.jpg" width="250" height="160" border="0"> </a>'),
       hr(),
-      
+
       # input the job category to search
       selectInput("category", "Select a Job Category:", choices = job_category, selected = FALSE),
       hr(),
@@ -46,10 +42,10 @@ shinyApp(
         )
       )
     ),
-    
+
     # main panel with tabbed interface
     mainPanel(
-      
+
       h4("Example Job Titles and Employees for the Selected Category:"),
       # output a table to explain the meaning of category:
       tableOutput("category"),
@@ -61,7 +57,7 @@ shinyApp(
       )
     )
   ),
-  
+
   # server.R
   server = function(input, output) {
     # the outputs for table:
@@ -85,12 +81,12 @@ shinyApp(
       data.frame(job.title,company) %>%
         setNames(c("Job Title", "Company"))
     })
-    
+
     # render plots for word cloud:
     output$plot = renderPlot({
       df = data()
       corpus = clean_corpus(data2corpus(df))
-      
+
       if(nrow(df)==0) {
         plot(0, main = "No jobs found in the category in this state", cex = 0, axes = FALSE, xlab = NA, ylab = NA)
       }
@@ -98,30 +94,30 @@ shinyApp(
         WordCloud(corpus)
       }
     })
-    
+
     # update the scraping process each time when a different state is seleceted:
     jobs = reactive({
       ab = states$Abbreviation[states$State==input$state]
       job_train %>% filter(results.state == ab) # subsetting jobs from the training dataframe
     })
-    
+
     # transform the dataframe to document term matrix and do some cleaning:
     data = reactive({
       dat = jobs()
-      
+
       # clean the dataframe:
       job_dat = data2corpus(dat)
       clean_dat = clean_corpus(job_dat)
       stem_clean_dat = clean_dat %>% tm_map(stemDocument)
       dtm = DocumentTermMatrix(stem_clean_dat) # transform into document term matrix
-      
+
       # remove terms that are in greater than 80% of documents
       dtm_reduced = removeCommonTerms(dtm, 0.8)
       dtm_dense = removeSparseTerms(dtm_reduced, 0.9)
       dat$cluster = LDA_predict(lda_model, dtm_dense)
       dat = dat %>% filter(cluster==input$category)
     })
-    
+
     # plot the locations on Google Map:
     output$view = renderGvis({
       map_jobs(data())

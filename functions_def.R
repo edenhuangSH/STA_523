@@ -173,6 +173,10 @@ map_jobs = function(locations){
   # check that the lat/long of the address is nonempty:
   locations$lat_long = paste(locations$latitude, locations$longitude, sep = ':')
   locations_complete = locations[!is.na(locations$latitude),]
+  
+  if (nrow(locations_complete) == 0) {
+    return(list(html = list(chart = '<h1>Locations not available</h1>')))
+  }
 
   locations_complete$tip =  with(locations_complete, paste('<a href="', results.url, '"target="_blank"',  '">', results.jobtitle,'</a>',
                                                            '<br>',  results.company, '-', results.city, '<br>', results.snippet))

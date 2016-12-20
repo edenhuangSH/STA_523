@@ -124,4 +124,3 @@ We could also improve the Shiny App by allowing multiple selections of clusters 
 
 [9] https://cran.r-project.org/web/packages/topicmodels/vignettes/topicmodels.pdf
 
-

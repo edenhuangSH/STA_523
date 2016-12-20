@@ -24,7 +24,6 @@ library(rgdal)
 library(httr)
 
 # -----------------------------------------------------------------------
-
 # Job Descript - returns a data frame with job descriptions from Indeed
 #   query - a string with the job title or keyword
 #   number - an integer, the number of job results returned
@@ -33,8 +32,9 @@ library(httr)
 JobDescript = function(query, number, location = "") {
   id = '1267002585503060'
   result  = data.frame()
-  query_limits = c(rep(25, floor(number / 25)), if(number %% 25 > 0){number %% 25})
-  starts = c(0,cumsum(query_limits)[-length(query_limits)])
+  query_limits = c(rep(25, floor(number / 25)), 
+                   if(number %% 25 > 0){number %% 25})
+  starts = c(0, cumsum(query_limits)[-length(query_limits)])
 
   for (i in seq_along(query_limits)) {
     tmp = jobSearch(publisher=id,
@@ -54,6 +54,9 @@ JobDescript = function(query, number, location = "") {
   return(result)
 }
 
+
+
+# -----------------------------------------------------------------------
 # Text mining functions - cleaning and transforming
 #   data2corpus - converts data frame into text corpus object
 #   clean_corpus - applied text cleaning functions to corpus object
@@ -93,8 +96,9 @@ clean_corpus = function(corpus) {
     tm_map(removeWords, stopwords('en')) %>%
     tm_map(removePunctuation) %>%
     tm_map(stripWhitespace)
-
 }
+
+
 
 # ----------------------------------------------------------------------
 # LDA predict - takes a document term matrix and lda_model and outputs
@@ -105,10 +109,11 @@ LDA_predict = function(lda_model, dtm) {
   return(test_topics)
 }
 
+
+
 # -------------------------------------------------------------------------
 # Word Cloud Function: plot a word cloud from a corpus
 WordCloud = function(corpus) {
-
   removed_dictionary = c("job", "one", "must", "gender",
                          "minimum", "key", "work", "new", "will",
                          "years", "including", "position", "make",
@@ -136,16 +141,10 @@ WordCloud = function(corpus) {
 # ----------------------------------------------------------------------
 # Mapping function - takes argument a dataframe and returns the location of subset data on Google Map
 
-# reference: https://github.com/dashee87/jobbR
-#            https://cran.r-project.org/web/packages/ggmap/ggmap.pdf
-
 # First we derive the dataset geo (lat/long of an arbitrary city) through web-scraping:
 # httr's write_disk can act like a cache: it won't download if the file exists
-
-
 # Now the map_job() function:
 map_jobs = function(locations){
-
   if(is.null(locations)){
     return(gvisMap(	data.frame(locationvar = 'Durham', tipvar= ''), locationvar = "locationvar" , tipvar ='tipvar',
                     options=list(showTip=TRUE,

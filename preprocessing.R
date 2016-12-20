@@ -1,5 +1,6 @@
+
 source("functions_def.R")
-states = read.csv("states.csv")
+states = read.csv("states.csv", stringsAsFactors = F)
 
 # I. fitting LDA model:
 
@@ -41,7 +42,7 @@ if (!('lda_model.RData' %in% files)) {
 }
 
 # --------------------------------------------------------------------------
-# Webscraping for mapping 
+# II. Webscraping for mapping 
 
 if (!(dir.exists('cities'))) {
   GET("http://www.mapcruzin.com/fcc-wireless-shapefiles/cities-towns.zip",
@@ -61,7 +62,7 @@ if (!(dir.exists('cities'))) {
 }
 
 # --------------------------------------------------------------------------
-# load data for shiny
+# III. Load data for shiny
 
 job_category = setNames(seq(1,3), c('Cluster 1', 'Cluster 2', 'Cluster 3'))
 states = c(' ', states)
@@ -70,25 +71,10 @@ load(file.path('data', 'job_train.RData'))
 
 
 # --------------------------------------------------------------------------
-# Obtain relative job title of each category
+# IV. Obtain relative job title of each category
 
-category <- cbind(job_train$results.jobtitle, job_train$results.company,
-             topics(lda_model) %>%
-               matrix(ncol = 1)) %>% 
-  data.frame(stringsAsFactors = FALSE) %>% 
-  setNames(c("JobTitle", "Company", "Cluster"))
-
-for (i in 1:3) {
-  assign(paste0("title", i), category[which(category$Cluster == i), 1] %>%
-           table() %>%
-           sort(decreasing = TRUE) %>%
-           head(n = 3L) %>%
-           as.data.frame() %>%
-           setNames(c("JobTitle", "Frequents")))
-  assign(paste0("company", i), category[which(category$Cluster == i), 2] %>%
-           table() %>%
-           sort(decreasing = TRUE) %>%
-           head(n = 3L) %>%
-           as.data.frame() %>%
-           setNames(c("Company", "Frequents")))
-}
+category <- cbind(job_train$results.jobtitle, job_train$results.company, job_train$results.state,
+                  topics(lda_model) %>%
+                    matrix(ncol = 1)) %>%
+  data.frame(stringsAsFactors = FALSE) %>%
+  setNames(c("JobTitle", "Company", "Abbreviation", "Cluster"))

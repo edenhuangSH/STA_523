@@ -16,9 +16,17 @@ One shorage of this function was that we could not specify the number of entries
 
 We also add a column "job.descript", which contains the full job descriptions for the jobs. To do this, we read the html links in dataframe created previously and grab the job descriptions under the "#job_summary" node.
 
+## Text cleaning
+
+After we obtained the raw job decriptions from Indeed, we needed to clean the results. We heavily utilized the text-mining package `tm`. It converted our dataframe of job descriptions into a "corpus" object. From there transformations can be done over that corpus object including removing stop words, punctuation, extra white-space, etc. Many of these steps are aggregated in the `clean_corpus` function that we wrote. Stemming the documents is also an important step. Using the `snowballC` package allowed words related by word stem to be condensed.
+
+Finally the cleaned words were used to create a document term matrix (DTM). The idea is that documents are broken into individual words. The rows are each document in the corpus and each column is a word. Each element is the count of that word in that document. Because a single document only has a small subset of words, the matrix is often sparse. Thankfully, the `tm` package has a `dtm` class that stores the document term matrix in a memory-efficient way. 
+
+<br>
+
 ## Clustering Jobs with LDA
 
-After we obtained the job decriptions, we were interested in how jobs are related to one another. Because the types of job are not know apriori, clustering jobs is considered a *unsupervised learning* problem. While there are many clustering algorithms that could have been suitable, we chose Latent Dirchlet Allocation because of its previous use in topic modeling. 
+We were interested in how jobs are related to one another. Because the types of job are not know apriori, clustering jobs is considered a *unsupervised learning* problem. While there are many clustering algorithms that could have been suitable, we chose Latent Dirchlet Allocation because of its previous use in topic modeling. 
 
 LDA is a genertive model. The model assumes that for each document in a corpus, $d_n$.
 
@@ -34,7 +42,9 @@ In other words, the LDA model assumes that a document is a collection of words c
 
 To assign a document a mixture of topics, we need to know the probability that the words in that document were generated using the model, $p(d_n |\alpha, \beta)$. We can find this value using Baye's Rule, but in general this posterior density is difficult to calculate. However there are many techniques such as Gibbs sampling to estimate the posterior. The final outcome is that each document is a assigned a mixture of topics, 30% from topic 1, 40% from topic 2, and so forth. Although topic assignment is probabalistic, to visualize similar jobs we grouped jobs based on the topic with the highest contribution. 
 
-The R package `topicmodels` implements latent dirchlet allocation. The input to `LDA` is a number of clusters and a document term matrix. The default method for training the model is variational E-M, a technique for posterior inference. The output is a trained model, where each document is has cluster assignments. Training on the roughly 1000 documents we scraped from Indeed took 1-2 minutes.  
+The R package `topicmodels` implements latent dirchlet allocation. The input to `LDA` is a number of clusters and a document term matrix. The default method for training the model is variational E-M, a technique for posterior inference. The output is a trained model, where each document is has cluster assignments. Training on the roughly 1000 documents we scraped from Indeed took 1-2 minutes. 
+
+<br>
 
 ## Shiny App
 
@@ -53,11 +63,17 @@ To achieve this, we created a `map_jobs` function, which took a data frame. In o
 
 After that, we started plotting the jobs on our gvisMap. We first filtered out jobs such that the locations could not be matched by the `geo` dataframe. Then it created another column called "tip" to store the urls for the jobs whose locations are available. After that, we plotted the jobs on the `gvisMap` by using the `gvisMap` function in the `ggmap` package.
 
+<br>
+
 ## Conclusion
 
 
 ## References
 
+https://en.wikipedia.org/wiki/Document-term_matrix
+
 https://www.cs.princeton.edu/~blei/papers/BleiNgJordan2003.pdf
 
 https://cran.r-project.org/web/packages/topicmodels/vignettes/topicmodels.pdf
+
+

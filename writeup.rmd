@@ -37,6 +37,7 @@ One shorage of this function was that we could not specify the number of entries
 
 We also add a column "job.descript", which contains the full job descriptions for the jobs. To do this, we read the html links in dataframe created previously and grab the job descriptions under the "#job_summary" node.
 
+<br>
 
 #### 2.2 Text Cleaning:
 
@@ -44,6 +45,7 @@ After we obtained the raw job decriptions from Indeed, we needed to clean the re
 
 Finally the cleaned words were used to create a document term matrix (DTM). The idea is that documents are broken into individual words. The rows are each document in the corpus and each column is a word. Each element is the count of that word in that document. Because a single document only has a small subset of words, the matrix is often sparse. Thankfully, the `tm` package has a `dtm` class that stores the document term matrix in a memory-efficient way. 
 
+<br>
 
 #### 2.3 Clustering Jobs with LDA:
 
@@ -65,11 +67,13 @@ To assign a document a mixture of topics, we need to know the probability that t
 
 The R package `topicmodels` implements latent dirchlet allocation. The input to `LDA` is a number of clusters and a document term matrix. The default method for training the model is variational E-M, a technique for posterior inference. The output is a trained model in where each document has cluster assignments. Training on the roughly 1000 documents we scraped from Indeed took 1-2 minutes. 
 
+<br>
 
 #### 2.4 Word Cloud and Text Mining:
 
 In the `word cloud()` function, we defined some common words that are not related to job skills (e.g: one, job, new, will, work etc.) as `removed_dictionary`. Then, we used `tm_map`, `removeWords` functions to remove those unrelated words. Next we used `wordcloud()` to plot a word cloud. The words were plotted in decreasing frequency in the word cloud. See the comments in the functions for more details.
 
+<br>
 
 #### 2.5 job_map() function:
 
